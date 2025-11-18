@@ -97,7 +97,26 @@ def get_source_transcript(source_index_tsv, source_prefix):
             if file_prefix == source_prefix:
                 return transcript
     return ""
+def get_conversion_task_dirs(converted_root):
+    """
+    返回所有的任务文件夹名称。
 
+    默认规则：
+        文件夹名包含 "_to_"
+
+    如果用户的结构不同，可以在这里完全修改筛选逻辑。
+
+    返回：
+        任务文件夹名列表（不含完整路径）
+    """
+
+    dirs = []
+    for d in os.listdir(converted_root):
+        full_path = os.path.join(converted_root, d)
+        if os.path.isdir(full_path) and "_to_" in d:   # ← 默认规则
+            dirs.append(d)
+
+    return dirs
 
 def calculate_speaker_similarity(speaker_extractor, target_wav_path, converted_wav_path, extractor_type):
     """计算说话人相似度（SECS）"""
@@ -151,22 +170,16 @@ def calculate_dnsmos(mos_computer, audio_path):
 def main(args):
     # 加载评估模型
     speaker_extractor, asr_model, mos_computer = load_evaluation_models(args.xvector_extractor)
-
     # 总结果存储
+
     all_results = []
-
-    # 遍历所有转换任务文件夹（格式：原语音前缀_to_目标语音前缀）
-    conversion_dirs = [
-        d for d in os.listdir(args.converted_root)
-        if os.path.isdir(os.path.join(args.converted_root, d)) and "_to_" in d
-    ]
-
+    conversion_dirs = get_conversion_task_dirs(args.converted_root)
     if not conversion_dirs:
         print(f"未找到符合格式的转换任务文件夹（需包含 '_to_'），请检查路径：{args.converted_root}")
         return
 
     # 源语音的index.tsv路径（用于获取参考文本）
-    source_index_tsv = args.source_labels  # 假设你的index.tsv在源语音根目录
+    source_index_tsv = args.source_labels
 
     for conv_dir in tqdm(conversion_dirs, desc="评测进度"):
         ref_text = None
@@ -305,7 +318,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="适配自定义文件夹结构的语音转换评测工具")
-    parser.add_argument("--converted_root", default='/root/autodl-tmp/output/consistency_VC',
+    parser.add_argument("--converted_root", default='/root/autodl-tmp/output/myfreevc_1',
                         help="转换语音的根目录（包含所有 '原前缀_to_目标前缀' 子文件夹）")
     parser.add_argument("--source_labels", default='AISHELL3_all.txt', help="源语音的根目录（包含 index.tsv 文件）")
     parser.add_argument("--xvector_extractor", default="resemblyzer",
