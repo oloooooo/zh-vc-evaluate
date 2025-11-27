@@ -88,8 +88,10 @@ def load_evaluation_models(xvector_extractor="resemblyzer"):
 # ==== 文本 index 读取 ====
 def get_source_transcript(index_path, source_prefix):
     """从 index 文件中获取源语音的参考文本（格式：file.wav<空格>文本）"""
-    if not os.path.exists(index_path):
-        return ""
+    # print(index_path)
+    # if not os.path.exists(index_path):
+    #     print("标签文件不存在")
+    #     return ""
     with open(index_path, "r", encoding="utf-8") as f:
         for line in f:
             line = line.strip()
@@ -256,8 +258,7 @@ def main(args):
 
             # 记录结果
             rel_conv = os.path.relpath(conv_path, args.converted_root)
-
-            all_results.append({
+            a_result = {
                 "subdir": subdir,
                 "converted_wav": rel_conv,
                 "source_prefix": source_prefix,
@@ -266,10 +267,14 @@ def main(args):
                 "target_wav": target_wav_path,
                 "SECS": secs,
                 "CER": cer,
+                "ref_text":ref_text, 
+                "hyp_text":hyp_text,
                 "DNSMOS_SIG": sig,
                 "DNSMOS_BAK": bak,
                 "DNSMOS_OVRL": ovr,
-            })
+            } #我在这里添加了一些键 ，但是我后面的代码没有改动，请你帮我改一下
+            print(a_result)
+            all_results.append(a_result)
 
     if not all_results:
         print("没有成功评测的条目，退出。")
@@ -283,7 +288,9 @@ def main(args):
         "subdir", "converted_wav",
         "source_prefix", "target_prefix",
         "source_wav", "target_wav",
-        "SECS", "CER", "DNSMOS_SIG", "DNSMOS_BAK", "DNSMOS_OVRL"
+        "SECS", "CER",
+        "DNSMOS_SIG", "DNSMOS_BAK", "DNSMOS_OVRL",
+        "ref_text", "hyp_text",
     ]
 
     secs_list, cer_list, sig_list, bak_list, ovr_list = [], [], [], [], []
@@ -324,6 +331,8 @@ def main(args):
             "DNSMOS_SIG": avg_sig,
             "DNSMOS_BAK": avg_bak,
             "DNSMOS_OVRL": avg_ovr,
+            "ref_text": "",
+            "hyp_text": "",
         })
 
     print("\n评测完成！")
@@ -340,7 +349,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--converted_root",
-        default="/root/autodl-tmp/seen_to_unseen",
+        default="/root/autodl-tmp/test_result/openvoicev2",
         help="转换语音的根目录（下面有 seen_xxx 等子目录，每个目录下是若干 原_to_目标.wav）"
     )
     parser.add_argument(
@@ -355,7 +364,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--source_labels",
-        default="AISHELL3_all.txt",
+        default="/root/zh-vc-evaluate/test_labels.txt",
         help="源语音 index 文件路径（格式：file.wav<空格>文本）"
     )
     parser.add_argument(
