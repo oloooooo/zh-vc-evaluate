@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Voice Conversion Demo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h2 {
+      margin-top: 40px;
+    }
+    .target-audio {
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 40px;
+      table-layout: fixed;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+      word-wrap: break-word;
+    }
+    th {
+      background-color: #f5f5f5;
+    }
+    .audio-player {
+      width: 300px;
+      max-width: 100%;
+    }
+
+    .source-label {
+      margin-top: 4px;
+      font-size: 0.9em;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>我的语音转换实验结果</h1>
+    <p>
+      本实验对比了不同语音转换模型在目标说话人语音转换任务上的性能。
+      对比实验包括四个模型：Proposed、XTTS、OpenVoice和ConsistencyVC。
+      每个模型都在相同的测试集上进行了评估，以比较它们在语音转换质量和计算效率方面的差异。
+    </p>
+  <!-- 对比实验 （Comparison） -->
+  <section id="comparison">
+    <h2>对比实验</h2>
+
+    <!-- Target Speaker 原语音 -->
+    <div class="target-audio">
+      <strong>Target Speaker:</strong><br>
+      <audio class="audio-player" controls>
+        <source src="target.wav" type="audio/wav">
+      </audio>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>No.</th>
+          <th>Source</th>
+          <th>Proposed</th>
+          <th>XTTS</th>
+          <th>OpenVoice</th>
+          <th>ConsistencyVC</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 示例行 -->
+        <tr>
+          <td>1</td>
+          <td>
+            <audio class="audio-player" controls>
+              <source src="source1.wav" type="audio/wav">
+            </audio>
+          </td>
+          <td>
+            <audio class="audio-player" controls>
+              <source src="converted1_proposed.wav" type="audio/wav">
+            </audio>
+          </td>
+          <td>
+            <audio class="audio-player" controls>
+              <source src="converted1_xtts.wav" type="audio/wav">
+            </audio>
+          </td>
+          <td>
+            <audio class="audio-player" controls>
+              <source src="converted1_openvoice.wav" type="audio/wav">
+            </audio>
+          </td>
+          <td>
+            <audio class="audio-player" controls>
+              <source src="converted1_consistencyvc.wav" type="audio/wav">
+            </audio>
+          </td>
+        </tr>
+        <!-- 更多行 -->
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 消融／相融实验 （Ablation / Blending / Mixture Experiment） -->
+  <section id="ablation">
+    <h2>消融实验</h2>
+
+    <!-- Target Speaker 原语音 -->
+    <div class="target-audio">
+      <strong>Target Speaker:</strong><br>
+      <audio class="audio-player" controls>
+        <source src="target.wav" type="audio/wav">
+      </audio>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>No.</th>
+          <th>wo_g</th>
+          <th>wo_f0</th>
+          <th>wo_information</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 示例行 -->
+        <tr>
+          <td>1</td>
+          <td>
+            <audio class="audio-player" controls>
+              <source src="srcA1.wav" type="audio/wav">
+            </audio>
+          </td>
+          <td>
+            <audio class="audio-player" controls>
+              <source src="srcB1.wav" type="audio/wav">
+            </audio>
+          </td>
+          <td>
+            <audio class="audio-player" controls>
+              <source src="blended1.wav" type="audio/wav">
+            </audio>
+          </td>
+        </tr>
+        <!-- 根据需要复制 / 增加行 -->
+      </tbody>
+    </table>
+  </section>
+
+</body>
+</html>
